@@ -50,16 +50,19 @@ form.addEventListener('submit', (e) => {
   const minCell = document.createElement('td');
   const maxCell = document.createElement('td');
   const results = document.createElement('td');
+  const loadingpercentage = document.createElement('td');
 
   jonidcell.textContent = jobid;
   minCell.textContent = minnametable;
   maxCell.textContent = maxnametable;
+  loadingpercentage.textContent = "0%"
   results.textContent = "resulting loading";
 
   newrow.appendChild(jonidcell);
   newrow.appendChild(minCell);
   newrow.appendChild(maxCell);
   newrow.appendChild(results);
+  newrow.appendChild(loadingpercentage);
   newrow.style.backgroundColor = 'red';
 
   tableBody.appendChild(newrow);
@@ -72,23 +75,34 @@ form.addEventListener('submit', (e) => {
   const totalRangeEnd = parseInt(maxnametable);
 
   // Function to process the next batch
+   let count =1;
   function processNextBatch() {
       if (currentBatchStart > totalRangeEnd) {
           clearInterval(intervalID);  
           console.log("All batches processed.");
+          loadingpercentage.textContent = "100%"
+          newrow.style.backgroundColor = 'green'; 
           return;
       }
 
       const batchEnd = Math.min(currentBatchStart + batchSize - 1, totalRangeEnd);
     
+    
       let primes = findPrimesSync(currentBatchStart, batchEnd);
+      
+      const progress = Math.min(100, Math.floor(((currentBatchStart - parseInt(minnametable, 10)) / (totalRangeEnd - parseInt(minnametable, 10))) * 100));
+      loadingpercentage.textContent = `${progress}%`;
 
+      
      
       results.textContent = `Primes Found: ${primes.length}`;
-      newrow.style.backgroundColor = 'green'; // Update row color
+    // Update row color
 
-      // Move to the next batch
+    // Move to the next batch
+       count++
+       console.log(count)
       currentBatchStart += batchSize;
+
   }
 
   
